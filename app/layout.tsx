@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from "@/lib/constants";
+import { ThemeProvider } from "next-themes";
 import "@/assets/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -22,8 +23,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={nunito.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className={nunito.className}>
+        <ThemeProvider defaultTheme="light" enableSystem attribute={"class"} disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
