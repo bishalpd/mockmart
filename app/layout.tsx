@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from "@/lib/constants";
 import { ThemeProvider } from "next-themes";
 import "@/assets/styles/globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: {
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className={nunito.className}>
         <ThemeProvider defaultTheme="light" enableSystem attribute={"class"} disableTransitionOnChange>
           {children}
+          <Toaster richColors={true} />
         </ThemeProvider>
       </body>
     </html>
