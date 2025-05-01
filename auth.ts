@@ -32,6 +32,7 @@ export const config = {
             email: credentials.email as string,
           },
         });
+
         // check if user exists and if the password matches
         if (user && user.password) {
           const isMatch = compareSync(credentials.password as string, user.password);
@@ -61,6 +62,7 @@ export const config = {
       if (trigger === "update") {
         session.user.name = user.name;
       }
+
       return session;
     },
     async jwt({ token, user, trigger, session }: any) {
@@ -79,32 +81,35 @@ export const config = {
             data: { name: token.name },
           });
         }
-        //
-        if (["signIn", "signUp"].includes(trigger)) {
+
+        if (trigger === "signIn" || trigger === "signUp") {
           const cookiesObject = await cookies();
           const sessionCartId = cookiesObject.get("sessionCartId")?.value;
 
-          if (!sessionCartId) return;
-
-          const sessionCart = await prisma.cart.findFirst({
-            where: { sessionCartId },
-          });
-          console.log("====>", sessionCart);
-          if (!sessionCart) return;
-
-          if (sessionCart.userId !== user.id) {
-            // Delete current user cart
-            await prisma.cart.deleteMany({
-              where: { userId: user.id },
+          if (sessionCartId) {
+            const sessionCart = await prisma.cart.findFirst({
+              where: { sessionCartId },
             });
 
-            // Assign new cart
-            await prisma.cart.update({
-              where: { id: sessionCart.id },
-              data: { userId: user.id },
-            });
+            if (sessionCart) {
+              // Delete current user cart
+              await prisma.cart.deleteMany({
+                where: { userId: user.id },
+              });
+
+              // Assign new cart
+              await prisma.cart.update({
+                where: { id: sessionCart.id },
+                data: { userId: user.id },
+              });
+            }
           }
         }
+      }
+
+      // Handle session updates
+      if (session?.user.name && trigger === "update") {
+        token.name = session.user.name;
       }
 
       return token;

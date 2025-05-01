@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { UserIcon } from "lucide-react";
 const UserButton = async () => {
   const session = await auth();
+
   if (!session) {
     return (
       <Button asChild>
